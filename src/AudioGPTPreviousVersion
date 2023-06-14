@@ -1,0 +1,293 @@
+package com.nlp.texttospeach;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class LexicalAnalyzer2 {
+    private static final Pattern WORD_PATTERN = Pattern.compile("^[a-zA-Z]+$");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
+
+    public static void main(String[] args) {
+        String filename = "C:\\Users\\mario\\IdeaProjects\\Mario Cross - 1901901 - NLP Text to Speach\\Readable.txt";
+        List<String> lexemeBuffer = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                processLine(line, lexemeBuffer);
+            }
+
+            System.out.println("End of file reached.");
+            // Perform further analysis using the lexemeBuffer
+            for (String lexeme : lexemeBuffer) {
+                // Do something with the lexeme
+                System.out.println("Lexeme: " + lexeme);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error reading the file: " + e.getMessage());
+        }
+    }
+
+    private static void processLine(String line, List<String> lexemeBuffer) {
+        String[] lexemes = line.split("(?i)[\\s-']+|(?<=\\p{Punct})(?=\\S)|(?<=\\S)(?=\\p{Punct})");
+
+        for (String lexeme : lexemes) {
+            processLexeme(lexeme, lexemeBuffer);
+        }
+    }
+
+    private static void processLexeme(String lexeme, List<String> lexemeBuffer) {
+        // Remove leading and trailing punctuation
+        String trimmedLexeme = lexeme.replaceAll("^[^a-zA-Z0-9']+|[^a-zA-Z0-9']+$", "");
+
+        if (isWord(trimmedLexeme)) {
+            lexemeBuffer.add(trimmedLexeme);
+        } else if (isNumber(trimmedLexeme)) {
+            lexemeBuffer.add(trimmedLexeme);
+        } else {
+            // Store special lexemes in the buffer as well, if desired
+            lexemeBuffer.add(lexeme);
+        }
+    }
+
+    private static boolean isWord(String lexeme) {
+        Matcher matcher = WORD_PATTERN.matcher(lexeme);
+        return matcher.matches();
+    }
+
+    private static boolean isNumber(String lexeme) {
+        Matcher matcher = NUMBER_PATTERN.matcher(lexeme);
+        return matcher.matches();
+    }
+}
+
+package com.nlp.texttospeach;
+
+import edu.stanford.nlp.pipeline.*;
+import edu.stanford.nlp.ling.CoreAnnotations.*;
+import edu.stanford.nlp.trees.TreeCoreAnnotations;
+import edu.stanford.nlp.util.CoreMap;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class LexicalAnalyzer2 {
+    private static final Pattern WORD_PATTERN = Pattern.compile("^[a-zA-Z]+$");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
+
+    public static void main(String[] args) {
+        String filename = "C:\\Users\\mario\\IdeaProjects\\Mario Cross - 1901901 - NLP Text to Speach\\Readable.txt";
+        List<String> lexemeBuffer = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                processLine(line, lexemeBuffer);
+            }
+
+            System.out.println("End of file reached.");
+            // Perform further analysis using the lexemeBuffer
+            for (String lexeme : lexemeBuffer) {
+                // Do something with the lexeme
+                System.out.println("Lexeme: " + lexeme);
+            }
+
+            // Perform syntax analysis using Stanford CoreNLP
+            analyzeSyntax(lexemeBuffer);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error reading the file: " + e.getMessage());
+        }
+    }
+
+    private static void processLine(String line, List<String> lexemeBuffer) {
+        String[] lexemes = line.split("(?i)[\\s-']+|(?<=\\p{Punct})(?=\\S)|(?<=\\S)(?=\\p{Punct})");
+
+        for (String lexeme : lexemes) {
+            processLexeme(lexeme, lexemeBuffer);
+        }
+    }
+
+    private static void processLexeme(String lexeme, List<String> lexemeBuffer) {
+        // Remove leading and trailing punctuation
+        String trimmedLexeme = lexeme.replaceAll("^[^a-zA-Z0-9']+|[^a-zA-Z0-9']+$", "");
+
+        if (isWord(trimmedLexeme)) {
+            lexemeBuffer.add(trimmedLexeme);
+        } else if (isNumber(trimmedLexeme)) {
+            lexemeBuffer.add(trimmedLexeme);
+        } else {
+            // Store special lexemes in the buffer as well
+            lexemeBuffer.add(lexeme);
+        }
+    }
+
+    private static boolean isWord(String lexeme) {
+        Matcher matcher = WORD_PATTERN.matcher(lexeme);
+        return matcher.matches();
+    }
+
+    private static boolean isNumber(String lexeme) {
+        Matcher matcher = NUMBER_PATTERN.matcher(lexeme);
+        return matcher.matches();
+    }
+
+    private static void analyzeSyntax(List<String> lexemeBuffer) {
+        // Combine lexemes into a single text
+        StringBuilder text = new StringBuilder();
+        for (String lexeme : lexemeBuffer) {
+            text.append(lexeme).append(" ");
+        }
+
+        // Use Stanford CoreNLP for syntax analysis
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,parse");
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+
+        Annotation document = new Annotation(text.toString().trim());
+        pipeline.annotate(document);
+
+        List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+        for (CoreMap sentence : sentences) {
+            System.out.println("Sentence: " + sentence.get(TextAnnotation.class));
+            System.out.println("Syntax Tree: " + sentence.get(TreeCoreAnnotations.TreeAnnotation.class));
+            // Perform further analysis or extract relevant information from the parse tree
+        }
+    }
+}
+
+package com.nlp.texttospeach;
+
+import edu.stanford.nlp.pipeline.*;
+import edu.stanford.nlp.ling.CoreAnnotations.*;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreeCoreAnnotations;
+import edu.stanford.nlp.util.CoreMap;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class LexicalAnalyzer2 {
+    private static final Pattern WORD_PATTERN = Pattern.compile("^[a-zA-Z]+$");
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
+
+    public static void main(String[] args) {
+        String filename = "C:\\Users\\mario\\IdeaProjects\\Mario Cross - 1901901 - NLP Text to Speach\\Readable.txt";
+        List<String> lexemeBuffer = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                processLine(line, lexemeBuffer);
+            }
+
+            System.out.println("End of file reached.");
+            // Perform further analysis using the lexemeBuffer
+            for (String lexeme : lexemeBuffer) {
+                // Do something with the lexeme
+                System.out.println("Lexeme: " + lexeme);
+            }
+
+            // Perform syntax analysis using Stanford CoreNLP
+            analyzeSyntax(lexemeBuffer);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + filename);
+        } catch (IOException e) {
+            System.out.println("Error reading the file: " + e.getMessage());
+        }
+    }
+
+    private static void processLine(String line, List<String> lexemeBuffer) {
+        String[] lexemes = line.split("(?i)[\\s-']+|(?<=\\p{Punct})(?=\\S)|(?<=\\S)(?=\\p{Punct})");
+
+        for (String lexeme : lexemes) {
+            processLexeme(lexeme, lexemeBuffer);
+        }
+    }
+
+    private static void processLexeme(String lexeme, List<String> lexemeBuffer) {
+        // Remove leading and trailing punctuation
+        String trimmedLexeme = lexeme.replaceAll("^[^a-zA-Z0-9']+|[^a-zA-Z0-9']+$", "");
+
+        if (isWord(trimmedLexeme)) {
+            lexemeBuffer.add(trimmedLexeme);
+        } else if (isNumber(trimmedLexeme)) {
+            lexemeBuffer.add(trimmedLexeme);
+        } else {
+            // Store special lexemes in the buffer as well
+            lexemeBuffer.add(lexeme);
+        }
+    }
+
+    private static boolean isWord(String lexeme) {
+        Matcher matcher = WORD_PATTERN.matcher(lexeme);
+        return matcher.matches();
+    }
+
+    private static boolean isNumber(String lexeme) {
+        Matcher matcher = NUMBER_PATTERN.matcher(lexeme);
+        return matcher.matches();
+    }
+
+    private static void analyzeSyntax(List<String> lexemeBuffer) {
+        // Combine lexemes into a single text
+        StringBuilder text = new StringBuilder();
+        for (String lexeme : lexemeBuffer) {
+            text.append(lexeme).append(" ");
+        }
+
+        // Use Stanford CoreNLP for syntax analysis
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,parse");
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+
+        Annotation document = new Annotation(text.toString().trim());
+        pipeline.annotate(document);
+
+        List<CoreMap> sentences = document.get(SentencesAnnotation.class);
+        for (int i = 0; i < sentences.size(); i++) {
+            CoreMap sentence = sentences.get(i);
+            System.out.println("Sentence: " + sentence.get(TextAnnotation.class));
+            System.out.println("Syntax Tree: " + sentence.get(TreeCoreAnnotations.TreeAnnotation.class));
+
+            // Save the parse tree to a file
+            Tree parseTree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
+            boolean saveSuccessful = saveParseTree(parseTree, "parse_tree_" + (i + 1) + ".txt");
+
+            if (saveSuccessful) {
+                System.out.println("Parse tree saved successfully.");
+            } else {
+                System.out.println("Failed to save parse tree.");
+            }
+
+            // Perform further analysis or extract relevant information from the parse tree
+        }
+    }
+
+    private static boolean saveParseTree(Tree parseTree, String filename) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write(parseTree.toString());
+            return true;
+        } catch (IOException e) {
+            System.out.println("Error saving parse tree: " + e.getMessage());
+            return false;
+        }
+    }
+
+}
