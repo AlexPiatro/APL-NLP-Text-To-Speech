@@ -2,6 +2,11 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import com.sun.speech.freetts.Voice;
+import com.sun.speech.freetts.VoiceManager;
+
+import com.sun.speech.freetts.audio.AudioPlayer;
+import com.sun.speech.freetts.audio.SingleFileAudioPlayer;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -10,10 +15,12 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 
+import javax.sound.sampled.AudioFileFormat;
+
 public class AudioGPT {
     private static final Pattern WORD_PATTERN = Pattern.compile("^[a-zA-Z]+$");
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
-
+    private static final String VOICE_NAME = "kevin16";
     public static void main(String[] args) {
         String filename = "Readable.txt";
         List<String> lexemeBuffer = new ArrayList<>();
@@ -93,6 +100,8 @@ public class AudioGPT {
         pipeline.annotate(document);
 
         List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
+        StringBuilder speechText = new StringBuilder(); // To store the combined text
+
         for (int i = 0; i < sentences.size(); i++) {
             CoreMap sentence = sentences.get(i);
             System.out.println("Sentence: " + sentence.get(CoreAnnotations.TextAnnotation.class));
@@ -117,10 +126,13 @@ public class AudioGPT {
                 System.out.println("Failed to save dependency parse.");
             }
 
-            // Perform further analysis or extract relevant information from the dependency parse
+            // Append the text of each sentence
+            speechText.append(sentence.get(CoreAnnotations.TextAnnotation.class)).append(" ");
         }
-    }
 
+        // Text-to-speech conversion
+        convertTextToSpeech(speechText.toString());
+    }
 
     private static void savePOSTags(List<CoreLabel> tokens, String filename) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
@@ -155,4 +167,42 @@ public class AudioGPT {
             return false;
         }
     }
+
+    private static void convertTextToSpeech(String text) {
+        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
+        Voice voice;
+        VoiceManager voiceManager = VoiceManager.getInstance();
+
+        voice = voiceManager.getVoice(VOICE_NAME);
+
+        if (voice != null) {
+            voice.allocate();
+            AudioPlayer aplayer = new SingleFileAudioPlayer("TextToSpeechAudioRecording.wav", AudioFileFormat.Type.WAVE);
+            voice.setAudioPlayer(aplayer);
+
+            // Split the text into sentences
+            String[] sentences = text.split("(?<=[.!?])\\s+");
+
+            // Iterate over each sentence
+            for (String sentence : sentences) {
+                // Pronounce the sentence with a pause at the end
+                voice.speak(sentence);
+                pause(300);  // Pause duration after each sentence (adjust as needed)
+            }
+
+            aplayer.close();
+            voice.deallocate();
+        } else {
+            System.out.println("Cannot find the specified voice: " + VOICE_NAME);
+        }
+    }
+
+    private static void pause(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
