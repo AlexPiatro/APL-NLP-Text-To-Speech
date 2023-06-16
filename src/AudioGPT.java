@@ -2,8 +2,6 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import edu.stanford.nlp.coref.CorefCoreAnnotations;
-import edu.stanford.nlp.coref.data.CorefChain;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -17,7 +15,7 @@ public class AudioGPT {
     private static final Pattern NUMBER_PATTERN = Pattern.compile("^[0-9]+$");
 
     public static void main(String[] args) {
-        String filename = "C:\\Users\\mario\\IdeaProjects\\Mario-Cross-1901901-APL-Project-NLP-Text-To-Speech\\Readable.txt";
+        String filename = "Readable.txt";
         List<String> lexemeBuffer = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
@@ -34,7 +32,7 @@ public class AudioGPT {
                 System.out.println("Lexeme: " + lexeme);
             }
 
-            // Perform syntax and semantic analysis using Stanford CoreNLP
+            // Perform syntax analysis using Stanford CoreNLP
             analyzeSyntax(lexemeBuffer);
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + filename);
@@ -86,31 +84,13 @@ public class AudioGPT {
             text.append(lexeme).append(" ");
         }
 
-        // Use Stanford CoreNLP for syntax and semantic analysis
+        // Use Stanford CoreNLP for syntax analysis
         Properties props = new Properties();
-        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse,coref");
+        props.setProperty("annotators", "tokenize,ssplit,pos,lemma,ner,parse,depparse");
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
 
         Annotation document = new Annotation(text.toString().trim());
         pipeline.annotate(document);
-
-        // Perform coreference resolution
-        Map<Integer, CorefChain> corefChains = document.get(CorefCoreAnnotations.CorefChainAnnotation.class);
-        if (corefChains != null) {
-            for (CorefChain chain : corefChains.values()) {
-                // Print the mentions in the chain
-                for (CorefChain.CorefMention mention : chain.getMentionsInTextualOrder()) {
-                    System.out.println("Chain ID: " + chain.getChainID());
-                    System.out.println("Mention: " + mention.mentionSpan);
-                }
-
-                // Access the representative mention for the chain
-                CorefChain.CorefMention representativeMention = chain.getRepresentativeMention();
-                System.out.println("Representative Mention: " + representativeMention.mentionSpan);
-            }
-        } else {
-            System.out.println("No coreference chains found.");
-        }
 
         List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
         for (int i = 0; i < sentences.size(); i++) {
@@ -137,8 +117,7 @@ public class AudioGPT {
                 System.out.println("Failed to save dependency parse.");
             }
 
-
-            // Perform further analysis or extract relevant information from the dependency parse and coreference resolution
+            // Perform further analysis or extract relevant information from the dependency parse
         }
     }
 
