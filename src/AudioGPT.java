@@ -1,3 +1,5 @@
+//Name: Mario Cross
+//ID: 1901901
 import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -187,7 +189,7 @@ public class AudioGPT {
             for (String sentence : sentences) {
                 // Pronounce the sentence with a pause at the end
                 voice.speak(sentence);
-                pause(300);  // Pause duration after each sentence (adjust as needed)
+                pause();  // Pause duration after each sentence (adjust as needed)
             }
 
             aplayer.close();
@@ -197,9 +199,9 @@ public class AudioGPT {
         }
     }
 
-    private static void pause(int milliseconds) {
+    private static void pause() {
         try {
-            Thread.sleep(milliseconds);
+            Thread.sleep(300);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

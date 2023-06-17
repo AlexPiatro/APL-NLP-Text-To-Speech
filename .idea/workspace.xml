@@ -5,28 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7e4334e4-8560-4c71-a2ed-2a7351c8526e" name="Changes" comment="Final Update. Hopefully.">
-      <change afterPath="$PROJECT_DIR$/TextToSpeechAudioRecording.wav.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dependency_parse_1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dependency_parse_2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dependency_parse_3.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dependency_parse_4.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dependency_parse_5.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dependency_parse_6.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dependency_parse_7.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/named_entity_tags_1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/named_entity_tags_2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/named_entity_tags_3.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/named_entity_tags_4.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/named_entity_tags_5.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/named_entity_tags_6.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/named_entity_tags_7.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pos_tags_1.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pos_tags_2.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pos_tags_3.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pos_tags_4.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pos_tags_5.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pos_tags_6.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pos_tags_7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +31,7 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "com.google.cloudcode.ide_session_index": "20230615_0005",
+    "com.google.cloudcode.ide_session_index": "20230616_0003",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/mario/OneDrive/Documents/dependencies/FreeTTS",
     "project.structure.last.edited": "Modules",
@@ -102,7 +81,14 @@
       <option name="project" value="LOCAL" />
       <updated>1686893426645</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Final Update. Hopefully.">
+      <created>1686893861690</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1686893861690</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
